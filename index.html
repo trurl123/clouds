@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Облака в Ижевске</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+    <body>
+<h2>Ижевск</h2>
+<p id="time"></p>
+<div style="position: relative; height:600px; width:600px; border: 1px solid black; margin:0; padding:0;">
+  <img src="http://orm.mipt.ru/archive/port32/borders.png"
+    style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
+  <img id="weather_img"
+    style="position:absolute; top:100px; left:100px; height:400px; width:400px; opacity:0.7"/>
+  <img src="http://orm.mipt.ru/archive/port32/placenames.png"
+    style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
+</div>
+<input type="button" value="<" onclick="set_previous_image()"></input>
+<input type="button" value=">" onclick="set_next_image()"></input>
+
+        <script>
+
+function utcNow() {
+    var now = new Date(); 
+    return new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+}
+
+function dateAdd(date, interval, units) {
+  var ret = new Date(date); //don't change original date
+  switch(interval.toLowerCase()) {
+    case 'year'   :  ret.setFullYear(ret.getFullYear() + units);  break;
+    case 'quarter':  ret.setMonth(ret.getMonth() + 3*units);  break;
+    case 'month'  :  ret.setMonth(ret.getMonth() + units);  break;
+    case 'week'   :  ret.setDate(ret.getDate() + 7*units);  break;
+    case 'day'    :  ret.setDate(ret.getDate() + units);  break;
+    case 'hour'   :  ret.setTime(ret.getTime() + units*3600000);  break;
+    case 'minute' :  ret.setTime(ret.getTime() + units*60000);  break;
+    case 'second' :  ret.setTime(ret.getTime() + units*1000);  break;
+    default       :  ret = undefined;  break;
+  }
+  return ret;
+}
+
+function create_img_src(time){
+    var str = 'http://orm.mipt.ru/archive/port32/';
+    str += (time.getYear()+1900).toString() + '_';
+    str += (time.getMonth()+1).toString() + '_';
+    str += time.getDate().toString() + '_';
+    str += time.getHours().toString() + '_';
+    str += time.getMinutes().toString() + '.png';
+    return str;
+}
+
+function create_timestamp(time){
+	time = dateAdd(time,'hour',1);
+    var str = '';
+    var year = (time.getYear()+1900).toString();
+    var month = (time.getMonth()+1).toString();
+    var day = time.getDate().toString();
+    var hour = time.getHours().toString();
+    var minute = time.getMinutes().toString();
+
+    str += year + '-';
+    str += (month.length === 1 ? '0': '') + month + '-';
+    str += (day.length === 1 ? '0': '') + day + ' ';
+    str += (hour.length === 1 ? '0': '') + hour + ':';
+    str += (minute.length === 1 ? '0': '') + minute;
+    return str;
+}
+
+function reload(){
+  var time = current_time;
+  var time_p = document.getElementById('time');
+  time_p.textContent = 'Время: ' + create_timestamp(time);
+  var img = document.getElementById('weather_img');
+  img.src = create_img_src(time);
+}
+
+function set_previous_image(){
+  current_time = dateAdd(current_time,'minute',-10);
+  reload();
+}
+
+function set_next_image(){
+  if (current_time < nowTime) {
+    current_time = dateAdd(current_time,'minute',10);
+    reload();
+  }
+}
+
+window.init_counter =  3;
+function init() {
+    if (init_counter <= 0)
+        return;
+    init_counter--;
+    window.current_time = dateAdd(utcNow(),'hour',3);
+    current_time = dateAdd(current_time,'minute',-10);
+    current_time.setMinutes(Math.floor(current_time.getMinutes() / 10)*10);
+    current_time.setSeconds(0);
+    window.nowTime = current_time;
+    window.counter = 6;
+    current_time = dateAdd(current_time,'minute',-60);
+    runFrame();
+}
+
+window.onload = init;
+
+function runFrame() {
+    reload();
+    if (counter==0) {
+        setTimeout(init,1000);
+       return;
+    }
+    current_time = dateAdd(current_time,'minute',10);
+    counter--;
+    setTimeout(runFrame,300);
+}
+
+        </script>
+    </body>
+</html>
