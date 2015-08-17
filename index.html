@@ -11,9 +11,15 @@
 		#legend {
 			padding-left: 10px;
 		}
+		#container {
+			max-width: 800px;
+			margin: auto;
+		}
 	</style>
+	<link href="norm.css" type="text/css" rel="stylesheet"/>
 </head>
     <body>
+<div id='container'> 
 <h2>Облака над Ижевском</h2>
 <p id="time"></p>
 <div style="position: relative; height:600px; width:600px; border: 1px solid black; margin:0; padding:0;" id='map'>
@@ -27,7 +33,7 @@
 <div id='legend'/>
 <input type="button" value="<" onclick="set_previous_image()"></input>
 <input type="button" value=">" onclick="set_next_image()"></input>
-
+</div>
         <script>
 
 function create_color_palette(){
@@ -133,7 +139,7 @@ function init() {
         return;
     init_counter--;
     window.current_time = dateAdd(utcNow(),'hour',3);
-    current_time = dateAdd(current_time,'minute',-10);
+    current_time = dateAdd(current_time,'minute',-13);
     current_time.setMinutes(Math.floor(current_time.getMinutes() / 10)*10);
     current_time.setSeconds(0);
     window.nowTime = current_time;
