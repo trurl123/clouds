@@ -2,13 +2,21 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Облака в Ижевске</title>
+    <title>Облака над Ижевском</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		#map, #legend {
+			float: left;
+		}
+		#legend {
+			padding-left: 10px;
+		}
+	</style>
 </head>
     <body>
-<h2>Ижевск</h2>
+<h2>Облака над Ижевском</h2>
 <p id="time"></p>
-<div style="position: relative; height:600px; width:600px; border: 1px solid black; margin:0; padding:0;">
+<div style="position: relative; height:600px; width:600px; border: 1px solid black; margin:0; padding:0;" id='map'>
   <img src="http://orm.mipt.ru/archive/port32/borders.png"
     style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
   <img id="weather_img"
@@ -16,11 +24,41 @@
   <img src="http://orm.mipt.ru/archive/port32/placenames.png"
     style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
 </div>
+<div id='legend'/>
 <input type="button" value="<" onclick="set_previous_image()"></input>
 <input type="button" value=">" onclick="set_next_image()"></input>
 
         <script>
 
+function create_color_palette(){
+    function create_color_palette_row(color, comment){
+        var str = '';
+        str += '<p style="margin:0;padding:0;border:0;">';
+        str += '<span style="background-color:' + color +';';
+        str += 'border:1px solid black">&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+        str += '&nbsp;' + comment + '</p>';
+        return str;
+    }
+
+    var str = "";
+    str += '<p style="margin:0;padding:0;font-weight:bold;">Высота (км):</p>';
+    str += create_color_palette_row('rgb(192,0,192)', '> 14');
+    str += create_color_palette_row('rgb(192,0,128)', '12-14');
+    str += create_color_palette_row('rgb(0,128,0)', '10-12');
+    str += create_color_palette_row('rgb(64,192,0)', '9-10');
+    str += create_color_palette_row('rgb(192,0,0)', '8-9');
+    str += create_color_palette_row('rgb(192,64,0)', '7-8');
+    str += create_color_palette_row('rgb(192,128,0)', '6-7');
+    str += create_color_palette_row('rgb(192,192,0)', '5-6');
+    str += create_color_palette_row('rgb(0,0,128)', '4-5');
+    str += create_color_palette_row('rgb(0,0,192)', '3-4');
+    str += create_color_palette_row('rgb(0,128,192)', '2-3');
+    str += create_color_palette_row('rgb(0,192,192)', '1-2');
+    str += create_color_palette_row('rgb(0,128,128)', '0.3-1');
+    str += create_color_palette_row('rgb(128,128,128)', 'no echo');
+    str += create_color_palette_row('rgb(0,0,0)', 'no data');
+    return str;
+}
 function utcNow() {
     var now = new Date(); 
     return new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
@@ -105,6 +143,8 @@ function init() {
 }
 
 window.onload = init;
+document.getElementById("legend").innerHTML = create_color_palette();
+
 
 function runFrame() {
     reload();
