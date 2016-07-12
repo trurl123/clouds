@@ -5,11 +5,15 @@
     <title>Облака над Ижевском</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<style>
-		#map, #legend {
+		#map, #legend, #nav, #time {
 			float: left;
 		}
 		#legend {
 			padding-left: 10px;
+		}
+		#nav {
+			padding-left: 10px;
+			margin-top: -3px;
 		}
 		#container {
 			max-width: 800px;
@@ -21,7 +25,12 @@
     <body>
 <div id='container'> 
 <h2>Облака над Ижевском</h2>
-<p id="time"></p>
+<div id="time"></div>
+<div id="nav">
+	<input type="button" value="<" onclick="set_previous_image()"></input>
+	<input type="button" value=">" onclick="set_next_image()"></input>
+	<input type="button" value="Refresh" onclick="refresh()"></input>
+</div>
 <div style="position: relative; height:600px; width:600px; border: 1px solid black; margin:0; padding:0;" id='map'>
   <img src="http://orm.mipt.ru/archive/port32/borders.png"
     style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
@@ -31,8 +40,6 @@
     style="position:absolute; top:0; left:0; height:600px; width:600px;"/>
 </div>
 <div id='legend'/>
-<input type="button" value="<" onclick="set_previous_image()"></input>
-<input type="button" value=">" onclick="set_next_image()"></input>
 </div>
         <script>
 
@@ -133,7 +140,11 @@ function set_next_image(){
   }
 }
 
-window.init_counter =  3;
+function refresh() {
+	window.init_counter =  3;
+	init();
+}
+
 function init() {
     if (init_counter <= 0)
         return;
@@ -148,14 +159,14 @@ function init() {
     runFrame();
 }
 
-window.onload = init;
+window.onload = refresh;
 document.getElementById("legend").innerHTML = create_color_palette();
 
 
 function runFrame() {
     reload();
     if (counter==0) {
-        setTimeout(init,1000);
+       setTimeout(init,1000);
        return;
     }
     current_time = dateAdd(current_time,'minute',10);
